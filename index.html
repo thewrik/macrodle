@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MACRODLE — a macro guessing game</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <h1>MACRODLE</h1>
+    <p class="sub">Guess the country from its macro fingerprint — distance, direction &amp; delta on every guess</p>
+
+    <div class="controls">
+      <input type="text" id="guessInput" list="countryList" placeholder="Type a country (e.g. Brazil)" autocomplete="off" />
+      <datalist id="countryList"></datalist>
+      <button class="primary" id="guessBtn">Guess</button>
+      <button id="newBtn">New Practice Round</button>
+    </div>
+    <div class="attempts" id="attemptsLabel"></div>
+
+    <div class="boardwrap">
+      <div class="row header" id="headerRow"></div>
+      <div id="board"></div>
+    </div>
+
+    <div id="message"></div>
+
+    <div class="legend">
+      <span><span class="dot" style="background:#3aa15e"></span>close match</span>
+      <span><span class="dot" style="background:#c9a227"></span>in the ballpark</span>
+      <span><span class="dot" style="background:#8a8f98"></span>far off</span>
+      <span>▲ / ▼ = answer is higher / lower &nbsp; · &nbsp; % = proximity</span>
+    </div>
+
+    <p class="footnote">Values are illustrative macro snapshots for gameplay, not a live data feed.</p>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+  <script src="ui.js"></script>
+</body>
+</html>
