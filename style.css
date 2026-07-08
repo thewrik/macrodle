@@ -62,14 +62,16 @@ button.primary:hover { background: #2563eb; }
 
 .attempts { text-align: center; font-size: 0.8rem; opacity: 0.6; margin-bottom: 10px; }
 
+.mystery-label { text-align: center; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.03em; opacity: 0.7; margin-bottom: 8px; text-transform: uppercase; }
+
 .boardwrap { overflow-x: auto; padding-bottom: 8px; }
 
 .row {
   display: grid;
-  grid-template-columns: 120px repeat(8, 96px);
+  grid-template-columns: 120px repeat(9, 96px);
   gap: 6px;
   margin-bottom: 6px;
-  min-width: 900px;
+  min-width: 996px;
 }
 
 .row.header .cell {
@@ -110,12 +112,22 @@ button.primary:hover { background: #2563eb; }
   padding: 3px;
   line-height: 1.25;
 }
+.geo-arrow { display: inline-block; }
 .cell .delta { font-size: 0.65rem; font-weight: 600; opacity: 0.92; }
 .cell .prox { font-size: 0.6rem; opacity: 0.85; }
 
 .cell.green { background: #3aa15e; }
 .cell.yellow { background: #c9a227; }
 .cell.gray { background: #8a8f98; }
+
+.row.mystery { margin-bottom: 14px; }
+.row.mystery .namecell { opacity: 0.6; font-style: italic; }
+.cell.mystery {
+  background: transparent;
+  border: 1.5px dashed rgba(128,128,128,.5);
+  color: inherit;
+  font-weight: 700;
+}
 
 #message { text-align: center; margin-top: 16px; font-size: 0.95rem; min-height: 24px; font-weight: 600; }
 

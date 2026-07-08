@@ -23,6 +23,27 @@
     headerRow.appendChild(d);
   });
 
+  function renderMysteryRow() {
+    const mysteryRow = document.getElementById("mysteryRow");
+    mysteryRow.innerHTML = "";
+    const nameCell = document.createElement("div");
+    nameCell.className = "namecell";
+    nameCell.textContent = "???";
+    mysteryRow.appendChild(nameCell);
+
+    cols.forEach(col => {
+      const cell = document.createElement("div");
+      cell.className = "cell mystery";
+      if (col.kind === "geo") {
+        cell.textContent = "?";
+      } else {
+        const raw = game.answer[col.key];
+        cell.textContent = col.kind === "numeric" ? col.fmt(raw) + (col.unit || "") : raw;
+      }
+      mysteryRow.appendChild(cell);
+    });
+  }
+
   function renderRow(country, row) {
     const rowEl = document.createElement("div");
     rowEl.className = "row";
@@ -31,11 +52,20 @@
     nameCell.textContent = country.name;
     rowEl.appendChild(nameCell);
 
-    row.forEach(({ result }) => {
+    row.forEach(({ col, result }) => {
       const cell = document.createElement("div");
       cell.className = "cell " + result.cls;
       const mainLine = document.createElement("div");
-      mainLine.textContent = result.value + (result.arrow ? " " + result.arrow : "");
+      if (col.kind === "geo") {
+        mainLine.appendChild(document.createTextNode(result.value + " "));
+        const arrow = document.createElement("span");
+        arrow.className = "geo-arrow";
+        arrow.style.transform = "rotate(" + result.bearing + "deg)";
+        arrow.textContent = "▲";
+        mainLine.appendChild(arrow);
+      } else {
+        mainLine.textContent = result.value + (result.arrow ? " " + result.arrow : "");
+      }
       cell.appendChild(mainLine);
       if (result.delta) {
         const deltaLine = document.createElement("div");
@@ -116,7 +146,9 @@
     document.getElementById("message").innerHTML = "";
     document.getElementById("guessInput").value = "";
     setAttemptsLabel();
+    renderMysteryRow();
   });
 
   setAttemptsLabel();
+  renderMysteryRow();
 })();
