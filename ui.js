@@ -34,12 +34,18 @@
     cols.forEach(col => {
       const cell = document.createElement("div");
       cell.className = "cell mystery";
+      const label = document.createElement("div");
+      label.className = "cell-label";
+      label.textContent = col.label;
+      cell.appendChild(label);
+      const val = document.createElement("div");
       if (col.kind === "geo") {
-        cell.textContent = "?";
+        val.textContent = "?";
       } else {
         const raw = game.answer[col.key];
-        cell.textContent = col.kind === "numeric" ? col.fmt(raw) + (col.unit || "") : raw;
+        val.textContent = col.kind === "numeric" ? col.fmt(raw) + (col.unit || "") : raw;
       }
+      cell.appendChild(val);
       mysteryRow.appendChild(cell);
     });
   }
@@ -55,6 +61,10 @@
     row.forEach(({ col, result }) => {
       const cell = document.createElement("div");
       cell.className = "cell " + result.cls;
+      const label = document.createElement("div");
+      label.className = "cell-label";
+      label.textContent = col.label;
+      cell.appendChild(label);
       const mainLine = document.createElement("div");
       if (col.kind === "geo") {
         mainLine.appendChild(document.createTextNode(result.value + " "));
@@ -86,6 +96,77 @@
   function setAttemptsLabel() {
     document.getElementById("attemptsLabel").textContent =
       "Attempt " + (game.guesses.length + 1) + " of 6 — daily country resets at midnight";
+  }
+
+  function revealBlurb(a) {
+    return '<div class="reveal">' +
+      a.blurb +
+      '<br/><br/>' +
+      "Region: " + a.region + " · Status: " + a.status + " · FX: " + a.fx + "<br/>" +
+      "GDP " + a.gdp + "% · Inflation " + a.inf + "% · Policy rate " + a.rate + "% · CA " + a.ca + "% GDP · Debt " + a.debt + "% GDP" +
+      "</div>";
+  }
+
+  function fireConfetti() {
+    const canvas = document.createElement("canvas");
+    canvas.className = "confetti-canvas";
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext("2d");
+    const dpr = window.devicePixelRatio || 1;
+    function resize() {
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = window.innerWidth + "px";
+      canvas.style.height = window.innerHeight + "px";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resize();
+
+    const colors = ["#3aa15e", "#c9a227", "#3b82f6", "#e75480", "#8a8f98", "#f97316"];
+    const particles = Array.from({ length: 140 }, () => ({
+      x: Math.random() * window.innerWidth,
+      y: -20 - Math.random() * window.innerHeight * 0.3,
+      w: 6 + Math.random() * 6,
+      h: 8 + Math.random() * 10,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      vy: 2 + Math.random() * 3,
+      vx: -1.5 + Math.random() * 3,
+      rot: Math.random() * 360,
+      vr: -8 + Math.random() * 16
+    }));
+
+    const duration = 2600;
+    const start = performance.now();
+
+    function frame(now) {
+      const elapsed = now - start;
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rot += p.vr;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rot * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      });
+      if (elapsed < duration) {
+        requestAnimationFrame(frame);
+      } else {
+        canvas.remove();
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function showSadEmoji() {
+    const el = document.createElement("div");
+    el.className = "sad-emoji";
+    el.textContent = "😢";
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1700);
   }
 
   function addShareButton() {
@@ -123,15 +204,14 @@
     input.value = "";
 
     if (res.win) {
-      msg.innerHTML = "✅ Nailed it in " + res.guessesUsed + "/6 — it was <b>" + res.answer.name + "</b>.";
+      const a = res.answer;
+      msg.innerHTML = "✅ Nailed it in " + res.guessesUsed + "/6 — it was <b>" + a.name + "</b>." + revealBlurb(a);
+      fireConfetti();
       addShareButton();
     } else if (res.lose) {
       const a = res.answer;
-      msg.innerHTML = "❌ Out of tries. It was <b>" + a.name + "</b>." +
-        '<div class="reveal">' +
-        "Region: " + a.region + " · Status: " + a.status + " · FX: " + a.fx + "<br/>" +
-        "GDP " + a.gdp + "% · Inflation " + a.inf + "% · Policy rate " + a.rate + "% · CA " + a.ca + "% GDP · Debt " + a.debt + "% GDP" +
-        "</div>";
+      msg.innerHTML = "❌ Out of tries. It was <b>" + a.name + "</b>." + revealBlurb(a);
+      showSadEmoji();
       addShareButton();
     } else {
       setAttemptsLabel();
