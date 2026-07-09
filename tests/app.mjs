@@ -9,7 +9,7 @@ assert.equal(pickCountriesForTier(DATA, 'surprise').some(c => c.name === 'Turkey
 assert.equal(pickCountriesForTier(DATA, 'easy').some(c => c.name === 'United States'), true);
 
 const game = createMacrodleGame(DATA);
-const first = game.guess('United States');
+const first = game.guess('usa');
 assert.equal(first.ok, true);
 assert.equal(first.evaluation.row.length, COLS.length);
 assert.equal(game.guess('United States').reason, 'duplicate');

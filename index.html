@@ -1,48 +1,86 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>MACRODLE — a macro guessing game</title>
-<link rel="stylesheet" href="vendor/country-guess-kit/styles.css" />
-<link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MACRODLE — Country Macro Wordle</title>
+  <meta name="description" content="Guess the country from its macro fingerprint. Wordle-style geography, macro-difference hints, and educational reveal summaries." />
+  <link rel="stylesheet" href="vendor/country-guess-kit/styles.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="wrap">
-    <h1>MACRODLE</h1>
-    <p class="sub">Guess the country from its macro fingerprint — distance, direction &amp; delta on every guess</p>
+  <main class="shell">
+    <header class="hero">
+      <nav class="game-switch" aria-label="Game switcher">
+        <a class="active" href="https://thewrik.github.io/macrodle/">MACRODLE</a>
+        <a href="https://thewrik.github.io/country-energy-wordle/">GridGuessr</a>
+      </nav>
+      <p class="eyebrow">Country macro wordle</p>
+      <h1>MACRODLE</h1>
+      <p class="lede">Guess the country from its macro fingerprint. Every miss gives you geographic distance, direction, and macro deltas so each guess teaches a little economics.</p>
+    </header>
 
-    <div class="controls">
-      <select id="modeSelect" aria-label="Mode">
-        <option value="all">Daily macro</option>
-        <option value="easy">Easy — major economies</option>
-        <option value="surprise">Surprise me — macro outliers</option>
-      </select>
-      <input type="text" id="guessInput" list="countryList" placeholder="Type a country (e.g. Brazil)" autocomplete="off" />
+    <section class="card target" aria-labelledby="target-title">
+      <div>
+        <p class="eyebrow">Today’s macro fingerprint</p>
+        <h2 id="target-title">Mystery economy</h2>
+        <p class="mini-copy">A compact macro dashboard: market status, FX regime, growth, inflation, rates, current account, and debt. Country stays hidden until solved.</p>
+      </div>
+      <div id="mysteryRow" class="macro-fingerprint" aria-label="Target macro fingerprint"></div>
+      <p id="attemptsLabel" class="source-note"></p>
+    </section>
+
+    <section class="card controls" aria-label="Guess controls">
+      <div class="mode-row">
+        <label for="modeSelect">Tier</label>
+        <select id="modeSelect" aria-label="Mode">
+          <option value="all">Daily macro</option>
+          <option value="easy">Easy — major economies</option>
+          <option value="surprise">Surprise me — macro outliers</option>
+        </select>
+      </div>
+      <p id="tierNote" class="tier-note"></p>
+      <label for="guessInput">Country guess</label>
+      <div class="guess-row">
+        <input type="text" id="guessInput" list="countryList" placeholder="e.g. USA, UK, Türkiye, South Korea" autocomplete="off" />
+        <button id="guessBtn">Guess</button>
+      </div>
       <datalist id="countryList"></datalist>
-      <button class="primary" id="guessBtn">Guess</button>
-      <button id="newBtn">New Practice Round</button>
-    </div>
-    <div class="attempts" id="attemptsLabel"></div>
+      <p id="message" class="message">Six guesses. Use the direction and distance to shrink the search space.</p>
+    </section>
 
-    <div class="mystery-label">🔍 Mystery macro fingerprint — figure out which country this is</div>
-    <div class="boardwrap">
-      <div class="row header" id="headerRow"></div>
-      <div class="row mystery" id="mysteryRow"></div>
-      <div id="board"></div>
-    </div>
+    <section id="answerCard" class="card answer" hidden>
+      <p class="eyebrow">Answer reveal</p>
+      <h2 id="answerTitle"></h2>
+      <p id="answerContext"></p>
+    </section>
 
-    <div id="message"></div>
+    <section class="grid">
+      <article class="card">
+        <h2>Guesses</h2>
+        <div class="boardwrap">
+          <div class="row header" id="headerRow"></div>
+          <div id="board" class="guess-board"></div>
+        </div>
+      </article>
+      <article class="card hints">
+        <h2>Hints</h2>
+        <div class="hint-block">
+          <h3>1. Geographic</h3>
+          <p id="geoHint">Make a guess to reveal distance and direction, just like a country guessing game.</p>
+        </div>
+        <div class="hint-block">
+          <h3>2. Macro deltas</h3>
+          <p id="macroHint">Each row shows whether the hidden economy is higher, lower, closer, or farther on the macro variables.</p>
+        </div>
+      </article>
+    </section>
 
-    <div class="legend">
-      <span><span class="dot" style="background:#3aa15e"></span>close match</span>
-      <span><span class="dot" style="background:#c9a227"></span>in the ballpark</span>
-      <span><span class="dot" style="background:#8a8f98"></span>far off</span>
-      <span>▲ / ▼ = answer is higher / lower &nbsp; · &nbsp; % = proximity</span>
-    </div>
-
-    <p class="footnote">Values are illustrative macro snapshots for gameplay, not a live data feed.</p>
-  </div>
+    <footer>
+      <button id="newBtn" class="secondary">New country</button>
+      <span>Illustrative macro snapshots for gameplay — not live market data.</span>
+    </footer>
+  </main>
 
   <script type="module" src="ui.js"></script>
 </body>

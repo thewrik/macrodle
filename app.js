@@ -1,4 +1,4 @@
-import { createGuessGame } from "./vendor/country-guess-kit/core.mjs";
+import { countryAliases, createGuessGame } from "./vendor/country-guess-kit/core.mjs";
 import { bearingDeg, haversineKm } from "./vendor/country-guess-kit/geo.mjs";
 import { resultGridShare } from "./vendor/country-guess-kit/share.mjs";
 
@@ -114,7 +114,7 @@ export function createMacrodleGame(data) {
     items: data,
     maxGuesses: MAX_GUESSES,
     getId: c => c.name,
-    aliases: c => [c.name],
+    aliases: c => countryAliases(c),
     evaluateGuess: ({ guess, target }) => ({
       row: COLS.map(col => ({ col, result: evalCell(col, guess, target, ranges) }))
     })

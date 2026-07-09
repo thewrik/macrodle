@@ -1,4 +1,5 @@
-import { $, bindGuessForm, populateDatalist } from "./vendor/country-guess-kit/dom.mjs";
+import { countryAliases } from "./vendor/country-guess-kit/core.mjs";
+import { $, bindGuessForm } from "./vendor/country-guess-kit/dom.mjs";
 import { copyToClipboard, fireConfetti, showFloatingEmoji } from "./vendor/country-guess-kit/effects.mjs";
 import { DATA } from "./data.js";
 import { createMacrodleGame, MAX_GUESSES, pickCountriesForTier } from "./app.js";
@@ -6,7 +7,12 @@ import { createMacrodleGame, MAX_GUESSES, pickCountriesForTier } from "./app.js"
 const game = createMacrodleGame(DATA);
 const cols = game.cols;
 
-populateDatalist($("countryList"), DATA);
+function populateCountryList() {
+  const values = [...new Set(DATA.flatMap(countryAliases))].sort((a, b) => a.localeCompare(b));
+  $("countryList").innerHTML = values.map(v => `<option value="${v.replaceAll('"', '&quot;')}"></option>`).join("");
+}
+
+populateCountryList();
 
 function currentMode() {
   return $("modeSelect")?.value || "all";
@@ -20,7 +26,12 @@ function candidatesForMode() {
 function restart(random = true) {
   game.start({ random, candidates: candidatesForMode() });
   $("board").innerHTML = "";
-  $("message").innerHTML = currentMode() === "surprise" ? "Surprise mode: expect macro outliers — high inflation, pegs, frontier markets, or unusual balances." : "";
+  $("answerCard").hidden = true;
+  $("message").innerHTML = currentMode() === "surprise" ? "Surprise mode: expect macro outliers — high inflation, pegs, frontier markets, or unusual balances." : "Six guesses. Use the direction and distance to shrink the search space.";
+  $("geoHint").textContent = "Make a guess to reveal distance and direction, just like a country guessing game.";
+  $("macroHint").textContent = "Each row shows whether the hidden economy is higher, lower, closer, or farther on the macro variables.";
+  $("guessInput").disabled = false;
+  $("guessBtn").disabled = false;
   $("guessInput").value = "";
   setAttemptsLabel();
   renderMysteryRow();
@@ -42,28 +53,12 @@ cols.forEach(c => {
 
 function renderMysteryRow() {
   const mysteryRow = $("mysteryRow");
-  mysteryRow.innerHTML = "";
-  const nameCell = document.createElement("div");
-  nameCell.className = "namecell";
-  nameCell.textContent = "???";
-  mysteryRow.appendChild(nameCell);
-
-  cols.forEach(col => {
-    const cell = document.createElement("div");
-    cell.className = "cell mystery";
-    const label = document.createElement("div");
-    label.className = "cell-label";
-    label.textContent = col.label;
-    cell.appendChild(label);
-    const val = document.createElement("div");
-    if (col.kind === "geo") val.textContent = "?";
-    else {
-      const raw = game.target[col.key];
-      val.textContent = col.kind === "numeric" ? col.fmt(raw) + (col.unit || "") : raw;
-    }
-    cell.appendChild(val);
-    mysteryRow.appendChild(cell);
-  });
+  const visible = cols.filter(col => col.kind !== "geo").slice(0, 8);
+  mysteryRow.innerHTML = visible.map(col => {
+    const raw = game.target[col.key];
+    const value = col.kind === "numeric" ? col.fmt(raw) + (col.unit || "") : raw;
+    return `<div class="mystery-tile"><span>${col.label}</span><strong>${value}</strong></div>`;
+  }).join("");
 }
 
 function renderRow(country, row) {
@@ -158,16 +153,31 @@ function submit() {
   }
 
   renderRow(res.guess, res.evaluation.row);
+  const geo = res.evaluation.row.find(x => x.col.kind === "geo")?.result;
+  if (geo) $("geoHint").innerHTML = `From ${res.guess.name}, target is about <b>${geo.value}</b> away. Follow the arrow in the guess row; ${geo.proximity}% geographic proximity.`;
+  const macroDeltas = res.evaluation.row
+    .filter(x => x.col.kind === "numeric" || x.col.kind === "ordinal")
+    .sort((a, b) => Math.abs((b.result.proximity ?? 0) - 100) - Math.abs((a.result.proximity ?? 0) - 100))
+    .slice(0, 4)
+    .map(x => `<span><b>${x.col.label}</b>: ${x.result.arrow || "≈"} ${x.result.delta || "exact"}</span>`)
+    .join("<br>");
+  $("macroHint").innerHTML = `Compared with ${res.guess.name}:<br>${macroDeltas}`;
   input.value = "";
 
   if (res.win) {
     const a = res.answer;
-    msg.innerHTML = "✅ Nailed it in " + res.guessesUsed + "/" + MAX_GUESSES + " — it was <b>" + a.name + "</b>." + revealBlurb(a);
+    msg.innerHTML = `✅ Correct: <b>${a.name}</b>.`;
+    $("answerCard").hidden = false;
+    $("answerTitle").textContent = `${a.name}: macro lesson unlocked`;
+    $("answerContext").innerHTML = a.blurb + "<br><br>" + game.lesson();
     fireConfetti({ className: "confetti-canvas" });
     addShareButton();
   } else if (res.lose) {
     const a = res.answer;
-    msg.innerHTML = "❌ Out of tries. It was <b>" + a.name + "</b>." + revealBlurb(a);
+    msg.innerHTML = `❌ Out of tries. It was <b>${a.name}</b>.`;
+    $("answerCard").hidden = false;
+    $("answerTitle").textContent = `${a.name}: macro lesson unlocked`;
+    $("answerContext").innerHTML = a.blurb + "<br><br>" + game.lesson();
     showFloatingEmoji("😢", { className: "sad-emoji" });
     addShareButton();
   } else {
