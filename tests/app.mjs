@@ -2,10 +2,14 @@ import assert from 'node:assert/strict';
 import { DATA } from '../data.js';
 import { createMacrodleGame, COLS, computeRanges, pickCountriesForTier } from '../app.js';
 
-assert.equal(DATA.length, 20);
+assert.ok(DATA.length >= 180, `expected broad macro coverage, got ${DATA.length}`);
+assert.ok(DATA.every(c => Number.isFinite(c.lat) && Number.isFinite(c.lng)), 'all countries need coordinates');
+assert.ok(DATA.every(c => Number.isFinite(c.gdp) && Number.isFinite(c.inf) && Number.isFinite(c.rate) && Number.isFinite(c.ca) && Number.isFinite(c.debt)), 'all countries need numeric macro fields');
+assert.ok(DATA.some(c => c.name === 'United States' && c.aliases?.includes('USA')), 'United States should include common aliases');
+assert.ok(DATA.some(c => c.name === 'Türkiye' || c.aliases?.includes('Türkiye')), 'Türkiye/Turkey spelling should be accepted');
 assert.equal(COLS.some(c => c.key === 'geo'), true);
 assert.equal(computeRanges(DATA).gdp > 0, true);
-assert.equal(pickCountriesForTier(DATA, 'surprise').some(c => c.name === 'Turkey'), true);
+assert.equal(pickCountriesForTier(DATA, 'surprise').some(c => c.name === 'Türkiye' || c.aliases?.includes('Türkiye')), true);
 assert.equal(pickCountriesForTier(DATA, 'easy').some(c => c.name === 'United States'), true);
 
 const game = createMacrodleGame(DATA);

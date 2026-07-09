@@ -1,0 +1,19 @@
+{
+  "generatedAt": "2026-07-09T06:27:26Z",
+  "countryCount": 215,
+  "sources": {
+    "restCountries": "https://raw.githubusercontent.com/mledoze/countries/master/countries.json",
+    "worldBankCountries": "https://api.worldbank.org/v2/country?format=json&per_page=400",
+    "worldBankIndicators": {
+      "gdp": "NY.GDP.MKTP.KD.ZG",
+      "inf": "FP.CPI.TOTL.ZG",
+      "ca": "BN.CAB.XOKA.GD.ZS",
+      "debt": "GC.DOD.TOTL.GD.ZS",
+      "rate": "FR.INR.LEND"
+    }
+  },
+  "notes": [
+    "rate uses World Bank lending interest rate as a policy-rate proxy where policy rates are unavailable",
+    "missing fields are filled with region/income/global medians and listed in each country's estimates array"
+  ]
+}

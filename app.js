@@ -16,7 +16,7 @@ export const COLS = [
   { key: "fx", label: "FX Regime", kind: "ordinal", scale: ORDINAL_SCALES.fx },
   { key: "gdp", label: "GDP Growth", unit: "%", kind: "numeric", tight: 0.3, wide: 1.5, fmt: v => v.toFixed(1) },
   { key: "inf", label: "Inflation", unit: "%", kind: "numeric", tight: 0.5, wide: 3, fmt: v => v.toFixed(1) },
-  { key: "rate", label: "Policy Rate", unit: "%", kind: "numeric", tight: 0.25, wide: 2, fmt: v => v.toFixed(2) },
+  { key: "rate", label: "Rate Proxy", unit: "%", kind: "numeric", tight: 0.25, wide: 2, fmt: v => v.toFixed(2) },
   { key: "ca", label: "Current Acct", unit: "% GDP", kind: "numeric", tight: 0.5, wide: 2.5, fmt: v => v.toFixed(1) },
   { key: "debt", label: "Debt/GDP", unit: "%", kind: "numeric", tight: 5, wide: 20, fmt: v => v.toFixed(0) }
 ];
@@ -105,7 +105,7 @@ function macroLesson(answer) {
   const caText = answer.ca >= 0 ? "a current-account surplus" : "a current-account deficit";
   const debtText = answer.debt >= 100 ? "a heavy public-debt load" : answer.debt <= 40 ? "a comparatively light public-debt load" : "a moderate public-debt load";
   const realRateText = realRate >= 3 ? "very tight real rates" : realRate <= -2 ? "negative real rates" : "a roughly balanced real-rate stance";
-  return `Macro lesson: ${answer.name} combines ${answer.status} market status, ${answer.fx.toLowerCase()} FX, ${caText}, and ${debtText}. Growth is ${answer.gdp.toFixed(1)}%, inflation is ${answer.inf.toFixed(1)}%, and the policy rate is ${answer.rate.toFixed(2)}%, implying ${realRateText}.`;
+  return `Macro lesson: ${answer.name} combines ${answer.status} market status, ${answer.fx.toLowerCase()} FX, ${caText}, and ${debtText}. Growth is ${answer.gdp.toFixed(1)}%, inflation is ${answer.inf.toFixed(1)}%, and the rate proxy is ${answer.rate.toFixed(2)}%, implying ${realRateText}.`;
 }
 
 export function createMacrodleGame(data) {
