@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>MACRODLE — a macro guessing game</title>
+<link rel="stylesheet" href="vendor/country-guess-kit/styles.css" />
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -12,6 +13,11 @@
     <p class="sub">Guess the country from its macro fingerprint — distance, direction &amp; delta on every guess</p>
 
     <div class="controls">
+      <select id="modeSelect" aria-label="Mode">
+        <option value="all">Daily macro</option>
+        <option value="easy">Easy — major economies</option>
+        <option value="surprise">Surprise me — macro outliers</option>
+      </select>
       <input type="text" id="guessInput" list="countryList" placeholder="Type a country (e.g. Brazil)" autocomplete="off" />
       <datalist id="countryList"></datalist>
       <button class="primary" id="guessBtn">Guess</button>
@@ -38,8 +44,6 @@
     <p class="footnote">Values are illustrative macro snapshots for gameplay, not a live data feed.</p>
   </div>
 
-  <script src="data.js"></script>
-  <script src="app.js"></script>
-  <script src="ui.js"></script>
+  <script type="module" src="ui.js"></script>
 </body>
 </html>

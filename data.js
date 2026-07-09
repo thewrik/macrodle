@@ -1,6 +1,6 @@
 // Illustrative macro snapshot values — approximate, for gameplay purposes.
 // Not live market data. Swap this out with a real feed if you want it accurate to the day.
-const DATA = [
+export const DATA = [
   { name: "United States",  region: "N. America",  status: "DM",       fx: "Free Float",    gdp: 2.0,  inf: 2.7,  rate: 4.25, ca: -3.5, debt: 122, lat:  38.9, lng:  -77.0, blurb: "The world's reserve-currency issuer: steady growth, a persistent twin deficit, and a Fed still fighting sticky inflation." },
   { name: "United Kingdom", region: "Europe",       status: "DM",       fx: "Free Float",    gdp: 1.0,  inf: 2.5,  rate: 4.00, ca: -3.0, debt: 100, lat:  51.5, lng:   -0.1, blurb: "Sluggish post-Brexit growth, a wide current account gap, and a BoE walking a tightrope between growth and price stability." },
   { name: "Germany",        region: "Europe",       status: "DM",       fx: "Free Float",    gdp: 0.3,  inf: 2.2,  rate: 2.25, ca:  5.5, debt: 63,  lat:  52.5, lng:   13.4, blurb: "Europe's export engine has stalled, but a hefty current account surplus and conservative debt levels keep the balance sheet pristine." },
@@ -23,4 +23,3 @@ const DATA = [
   { name: "Russia",         region: "Europe",       status: "EM",       fx: "Managed Float", gdp: 1.5,  inf: 9.0,  rate: 20.00,ca:  3.0, debt: 15,  lat:  55.8, lng:   37.6, blurb: "A sanctioned, energy-exporting economy with very low public debt but rates raised sharply to fight double-digit inflation." }
 ];
 
-if (typeof module !== "undefined") module.exports = DATA;
